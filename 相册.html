@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+	*{
+		margin:0;
+		padding:0;
+	}
+	body{
+		background:url('img/xc_bg.jpg');
+	}
+	#picBox{
+		width: 81%;
+		height: 600px;
+		position:relative;
+		margin:40px auto;
+		border:1px solid #999;
+	}
+	span{
+		width: 159px;/* 120,80 *//* 160/159,99/98 */
+		height: 99px;
+		background: url('img/xc_0.jpg');
+		float:left;
+		margin:10px 30px 0 30px;
+		position:relative;
+	}
+	i{
+		width: 159px;/* 120,80 *//* 160/159,99/98 */
+		height: 99px;
+		background: url('img/xc_0.jpg');
+		position:absolute;
+		left:0;
+		top:0;
+		/* transition:all 2s; */
+	}
+</style>
+<script src="js/javascriptFn.js"></script>
+<script>
+	function picMove(obj, json, options){
+	    var options=options || {};
+	    options.duration=options.duration || 600;
+	    options.easing=options.easing || 'linear';
+	    var start={};
+	    var dis={};
+	    for(var name in json){
+	        start[name]=parseFloat(getStyle(obj, name)) || 0;
+	        dis[name]=json[name]-start[name];
+	    }
+	    var count=Math.floor(options.duration/30);
+	    var n=0;
+	    clearInterval(obj.timer);
+		    obj.timer=setInterval(function(){
+		        n++;
+		        for(var name in json){
+		            switch(options.easing){
+		                case 'linear':
+		                    var a=n/count;
+		                    var cur=start[name]+dis[name]*a;
+		                    break;
+		                case 'ease-in':
+		                    var a=n/count;
+		                    var cur=start[name]+dis[name]*a*a*a;
+		                    break;
+		                case 'ease-out':
+		                    var a=1-n/count;
+		                    var cur=start[name]+dis[name]*(1-a*a*a);
+		                    break;
+			        }
+		            if(name=='opacity'){
+		                obj.style.opacity=cur;
+		                obj.style.filter='alpha(opacity='+cur*100+')';
+		            }else{
+		                obj.style[name]=cur+'px';
+		            }
+			    }
+			    if(n == count/2){
+			    	options.on && options.on();
+			    }
+		        if(n==count){
+		            clearInterval(obj.timer);
+		            options.complete && options.complete();
+		        }
+	    	}, 30);
+	}
+	window.onload = function(){		
+		var oPicBox = document.getElementById('picBox');
+		var aSpan = oPicBox.children;
+		var R = 5;
+        var C = 5;
+        // var h = 0;
+        for(var r=0; r<R; r++){
+            for(var c=0; c<C; c++){
+                var oSpan=document.createElement('span');
+                var oI = document.createElement('i');
+                oPicBox.appendChild(oSpan);
+                oSpan.appendChild(oI);
+                oSpan.style.backgroundPosition=-oSpan.offsetWidth*c+'px '+-oSpan.offsetHeight*r+'px';
+                oSpan.style.position='absolute';
+                oSpan.style.left=oSpan.offsetWidth*c+150+'px';
+                oSpan.style.top=oSpan.offsetHeight*r+50+'px';
+                oSpan.style.margin = 0;
+                oI.style.backgroundPosition=-oI.offsetWidth*c+'px '+-oI.offsetHeight*r+'px';
+            }
+        }
+        var aI = document.getElementsByTagName('i');
+        var aPos= {};
+        var bPos = {};
+        for(var i=0; i<aSpan.length; i++){
+            aPos[i]={
+                left: aSpan[i].offsetLeft,
+                top: aSpan[i].offsetTop
+            };
+        }
+        var h = 0;
+        var f = 0;
+        for(var i=0; i<aSpan.length; i++){
+        	if(h%5 == 0){
+        		var f = 0
+        		aSpan[i].style.left = aSpan[i].offsetWidth*f+30+'px';
+            }else{
+            	aSpan[i].style.left = aSpan[i].offsetWidth*f+30*(2*f+1)+'px';
+            }
+            
+            f++
+            h++
+        }
+        var n = 0;
+        var m = 0;
+        for(var r=0; r<R; r++){
+            for(var c=n; c<C*(r+1); c++){
+                aSpan[c].style.top = aSpan[c].offsetHeight*m+10*(m+1)+'px';
+            }
+            n = n + 5;
+            m = m + 1; 
+        }
+        for(var i=0; i<aSpan.length; i++){    
+            bPos[i]={
+                left: aSpan[i].offsetLeft,
+                top: aSpan[i].offsetTop
+            };
+        }
+        for(var i = 0; i < aSpan.length; i++){
+        	aSpan[i].style.left = aPos[i].left + 'px';
+        	aSpan[i].style.top = aPos[i].top + 'px';
+        }
+        var Flag = true;
+        for(var i = 0; i < aSpan.length; i++){
+        	(function(index){
+		        aSpan[i].onclick = function(){
+		        	if(Flag){		        		
+		        		for(var i = 0; i < aSpan.length; i++){
+		        				(function(m){
+			        				aSpan[i].style.transition = '0.5s all';
+			        				picMove(aI[i],{opacity:0})
+			        				
+				        			picMove(aSpan[i],{left:bPos[i].left,top:bPos[i].top},{
+				        				easing:'ease-out',
+				        				on:function(){
+				        					aSpan[m].style.transform = 'rotate('+rnd(-25,25)+'deg)';
+				        				},
+				        				complete:function(){
+					        				aSpan[m].style.border = '6px solid #fff';
+				        				}
+				        			})			        			
+				        			aSpan[i].style.backgroundImage = 'url(img/xc_'+i+'.jpg)';
+					        		aSpan[i].style.backgroundSize = '100%';
+				        		})(i)
+			        	}
+			        	
+		        	}else{
+		        		for(var i = 0; i < aSpan.length; i++){
+		        			(function(n){
+		        				aSpan[i].style.border = '0px solid #fff';
+		        				picMove(aI[i],{opacity:1});
+		        				aI[i].style.backgroundImage = 'url(img/xc_'+index+'.jpg)';
+				            	aI[i].style.backgroundSize = 839 + 'px';
+				        		picMove(aSpan[i],{left:aPos[i].left,top:aPos[i].top},{
+				        			easing:'ease-out',
+				        			on:function(){
+				        				aSpan[n].style.transform = '';
+				        			},
+				        			complete:function(){}
+				        		})
+				        	})(i)
+				        }
+			        }
+			        Flag = !Flag
+			    }
+		    })(i)
+	    }
+
+	}
+</script>
+</head>
+<body>
+<div id="picBox"></div>
+</body>
+</html>
+<!-- document.onmouseup = function(ev){
+			var oEvent = ev || event;
+			var oDiv = document.createElement('div');
+			oDiv.style.width = 5 +'px';
+			oDiv.style.height = 5 +'px';
+			oDiv.style.opacity = 1;
+			oDiv.style.position = 'absolute';
+			oDiv.style.top = oEvent.clientY + 'px';
+			oDiv.style.left = oEvent.clientX + 'px';
+			oDiv.style.borderRadius = '50%'
+			oDiv.style.background = 'radial-gradient(#fff,#0ebfdd)';
+			var l = oEvent.clientX - 15;
+			var t = oEvent.clientY - 15;
+			document.body.appendChild(oDiv);
+			move(oDiv,{width:30,height:30,opacity:0.4,top:t,left:l},{duration:400,complete:function(){
+				document.body.removeChild(oDiv)
+			}})
+		} -->

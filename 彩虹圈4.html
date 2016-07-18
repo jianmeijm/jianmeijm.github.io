@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+	*{
+		margin:0;
+		padding:0;
+	}
+	body{
+		background:#000;
+		overflow:hidden;
+		cursor:url('cai/qun_1.png');
+	}
+	#btn{
+		width: 80px;
+		height: 40px;
+		display:block;
+		font-family:'微软雅黑';
+		font-weight:bold;
+		font-size:15px;
+		margin:0 auto;
+	}
+	img{
+		width: 100px;
+		height: 100px;
+	}
+</style>
+<script src="js/javascriptFn.js"></script>
+<script>
+	var on1count = 0;
+	var on2count = 0;
+	var h = 0;
+	var n = 0;
+	var m = 0;
+	var timermovep;
+	function on1(left1,top1,top2){
+		var aBubble = document.createElement('img');
+		if(on1count < 4){
+			aBubble.src = 'cai/qun_'+1+'.png';
+			document.getElementsByClassName('a'+h)[0].src = 'cai/qun_'+1+'.png';
+		}
+		if(on1count >= 4 && on1count < 9){
+			aBubble.src = 'cai/qun_'+2+'.png';
+			document.getElementsByClassName('a'+h)[0].src = 'cai/qun_'+2+'.png';
+		}
+		if(on1count >= 9 && on1count < 15){
+			aBubble.src = 'cai/qun_'+3+'.png';
+			document.getElementsByClassName('a'+h)[0].src = 'cai/qun_'+3+'.png';
+		}
+		if(on1count >= 15 && on1count < 20){
+			aBubble.src = 'cai/qun_'+4+'.png';
+			document.getElementsByClassName('a'+h)[0].src = 'cai/qun_'+4+'.png';
+		}
+		on1count++;
+		if(on1count >= 20){
+			on1count = 0;	
+		}
+		aBubble.style.position = 'absolute';			
+		aBubble.style.top = top1 +'px';
+		aBubble.style.left = left1 +'px';
+		var t = left1 - 200;
+		document.body.appendChild(aBubble);
+		this.onmousedown = function(){
+			return false;
+		}
+		move(aBubble,{width:0,height:0,top:top2},{duration:1500,
+			complete:function(){
+			document.body.removeChild(aBubble)
+		}})
+	}
+	function on2(left1,top1){
+		var oBubble = document.createElement('img');
+		oBubble.src = 'cai/qun_'+1+'.png'
+		oBubble.className = 'a'+h;
+		oBubble.style.position = 'absolute';
+		oBubble.style.top = top1 - 25 +'px';
+		oBubble.style.left = left1 - 25 +'px';
+		oBubble.style.zIndex = 999;
+		var t = left1 - 175; 
+		document.body.appendChild(oBubble);
+		this.onmousedown = function(){
+			return false;
+		}
+		movep(oBubble);				
+	}
+	function on3(left1,top1,top2){
+		var aBubble = document.createElement('img');
+		if(on1count <= 4){
+			aBubble.src = 'cai/qun_'+1+'.png';
+		}
+		if(on1count >= 4 && on1count <= 9){
+			aBubble.src = 'cai/qun_'+2+'.png';
+		}
+		if(on1count >= 9 && on1count <= 15){
+			aBubble.src = 'cai/qun_'+3+'.png';
+		}
+		if(on1count >= 15 && on1count <= 20){
+			aBubble.src = 'cai/qun_'+4+'.png';
+		}
+		on1count++;
+		if(on1count == 20){
+			on1count = 0;	
+		}
+		aBubble.style.position = 'absolute';			
+		aBubble.style.top = top1 +'px';
+		aBubble.style.left = left1 +'px';
+		var t = left1 - 200;
+		document.body.appendChild(aBubble);
+		move(aBubble,{width:0,height:0,top:top2},{duration:1500,
+			complete:function(){
+			document.body.removeChild(aBubble);
+		}})
+	}
+	function movep(obj){
+		var iSpeedX = rnd(9,12);
+		var iSpeedY = rnd(9,12); 		
+		var count1 = rnd(8,13);//小
+		var count2 = rnd(50,100);//大
+		var count3 = rnd(4,10);	//转头次数
+		var count4 = rnd(340,440);//快
+		var count5 = rnd(150,250);//慢
+		var FlagK = false;
+		var FlagM = false;
+		var k = 0;
+		var r = 0;	
+		timermovep = setInterval(function(){
+			n++;
+			if(m%count3 == 0){					
+				if(n%count2 == count2-1){
+					m++;
+					iSpeedX*=-1;
+					count2 = rnd(50,100);
+					count3 = rnd(4,10);
+					n=0;
+				}
+			}else{
+				if(n%count1 == count1-1){
+					m++;
+					iSpeedX*=-1;
+					count1 = rnd(8,13);
+				}
+			}
+			if(k%count4 == count4-1){
+				iSpeedX*=2;
+				iSpeedY*=2;
+				count4 = rnd(50,60);
+				if(FlagK){
+					iSpeedX = rnd(9,12);
+					iSpeedY = rnd(9,12);
+				count4 = rnd(450,540);
+				k= 0;
+				}
+				FlagK = !FlagK;
+			}
+			if(r%count5 == count5-1){
+				iSpeedX*=0.6;
+				iSpeedY*=0.6;
+				count5 = rnd(70,90);
+				if(FlagM){
+					iSpeedX = rnd(9,12);
+					iSpeedY = rnd(9,12);
+				count5 = rnd(150,250);
+				r= 0;
+				}
+				FlagM = !FlagM
+			}
+			r++
+			k++
+			var l = obj.offsetLeft+iSpeedX;
+			var t = obj.offsetTop+iSpeedY;
+			if(t>=document.documentElement.clientHeight-obj.offsetHeight){
+				t=document.documentElement.clientHeight-obj.offsetHeight;
+				iSpeedX*=1;
+				iSpeedY*=-1;
+			}
+			if(t<=0){
+				t=0;
+				iSpeedX*=1;
+				iSpeedY*=-1;
+			}
+			if(l>=document.documentElement.clientWidth-obj.offsetWidth){
+				l=document.documentElement.clientWidth-obj.offsetWidth;
+				iSpeedY*=1;
+				iSpeedX*=-1;
+			}
+			if(l<=0){
+				l=0;
+				iSpeedY*=1;
+				iSpeedX*=-1;
+			}
+			obj.style.left = l+'px';
+			obj.style.top = t+'px';
+			if(n%2){
+			    on1(parseFloat(l),parseFloat(t));
+			}
+		},30)
+	}
+	window.onload = function(){
+		var oBtn = document.getElementById('btn');
+		var Flag = true;	
+		oBtn.onclick = function(){			
+			on1count = 0;
+			on2count = 0;
+			h++;
+			if(!Flag){
+				oBtn.value = '自动移动';								
+				on2(rnd(0,1000),rnd(0,600));
+				document.onmousedown=null;
+			}else{
+				oBtn.value = '手动移动';
+				m = 0;
+				n = 0;
+				clearInterval(timermovep)
+				move(document.getElementsByClassName('a'+(h-1))[0],{width:0,height:0},{
+					duration:1500,
+					complete:function(){
+						document.body.removeChild(document.getElementsByClassName('a'+(h-1))[0])
+					}
+				})
+				document.onmousedown = function(ev){
+					document.onmousemove = function(ev){
+						var oEvent = ev || event;
+							on2count++;
+							if(on2count%4 == 0){
+								on3(oEvent.clientX-50,oEvent.clientY-50,oEvent.clientY-150)
+							}
+					}
+					document.onmouseup = function(){						
+						document.onmousemove = null;
+						document.onmouseup = null;
+					}
+					return false;
+				}				
+			}
+			Flag = !Flag;
+		}
+		on2(rnd(200,800),rnd(200,600));
+	}
+</script>
+</head>
+<body>
+<input type="button" value="自动移动" id="btn">
+</body>
+</html>
